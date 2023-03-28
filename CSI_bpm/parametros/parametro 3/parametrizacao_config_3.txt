@@ -1,0 +1,7 @@
+-------------Parametro 3 ------------
+
+Frequência Min/Max : 0.6/3.67
+
+Maiores Amplitudes : 2
+
+Janela Médias Móveis : 10

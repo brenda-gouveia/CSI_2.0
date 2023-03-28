@@ -1,0 +1,141 @@
+# Import de todas as bibliotecas necessarias
+import json
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import datetime
+
+from datetime import timedelta
+
+# Importando dados
+fileName = '2022_09_12_-_15_30_53_HeartRateData.json'
+with open(fileName, 'r') as openfile: 
+    heartRateData = json.load(openfile)
+
+heart_rate_information = heartRateData['heart_rate_information']
+
+timeStampColection_pcap= [
+    "2022_09_12_-_15_35_55",
+    "2022_09_12_-_15_37_36",
+    "2022_09_12_-_15_39_08",
+    "2022_09_12_-_15_40_41",
+    "2022_09_12_-_15_42_00",
+    "2022_09_12_-_15_44_07",
+    "2022_09_12_-_15_45_23",
+    "2022_09_12_-_15_46_51",
+    "2022_09_12_-_15_48_29",
+    "2022_09_12_-_15_50_28",
+    "2022_09_12_-_15_51_47",
+    "2022_09_12_-_15_53_18",
+    "2022_09_12_-_15_55_58",
+    "2022_09_12_-_15_58_20",
+    "2022_09_12_-_16_00_24",
+    "2022_09_12_-_16_01_54",
+    "2022_09_12_-_16_03_36"
+]
+
+timeStampColection_DATE_String = []
+
+for i in range(len(timeStampColection_pcap)):
+    aaa = timeStampColection_pcap[i]
+    xxx = str(aaa).replace("_-_"," ").replace("_","-", 2).replace("_",":", 2)
+    timeStampColection_DATE_String.append(xxx)
+# print('timeStampColection_DATE_String')
+# print(timeStampColection_DATE_String)
+
+timeStartColection = []
+for j in timeStampColection_DATE_String:
+    jj = pd.Timestamp(j)
+    timeStartColection.append(jj)
+# print('timeStartColection')
+# print(timeStartColection)
+
+timeEndColection = []
+for k in timeStartColection:
+    timeEndColection.append(k + timedelta(seconds=70))
+# print('timeEndColection')
+# print(timeEndColection)
+
+
+time_array1 = []
+for iten in heart_rate_information['start_time']:
+    ts_var1 = pd.Timestamp(iten, tz='UTC')
+    xx1 = ts_var1.astimezone(tz='America/Sao_Paulo')
+    time_array1.append(str(xx1.tz_localize(None)))
+# print('time_array1')
+# print(time_array1)  
+
+time_array = []
+for iten in time_array1:
+    ts_var = pd.Timestamp(iten)
+    time_array.append(ts_var)
+# print('time_array')
+# print(time_array)  
+
+for j in range(len(timeStartColection)):
+    nameIndex = j+1
+    nameTimeStamp = timeStampColection_pcap[j]
+    heart_rate = []
+    start_time = []
+    for i in range(len(time_array)):
+        # print('i')
+        # print(i)
+        # print('time_array[i]')
+        # print(time_array[i])
+        # print('timeStartColection[j]')
+        # print(timeStartColection[j])
+        # print('timeEndColection[j]')
+        # print(timeEndColection[j])
+        if (time_array[i]>=timeStartColection[j] and time_array[i]<=timeEndColection[j]):
+        # if (time_array[i]>=time_array[j]):
+            heart_rate.append(heart_rate_information['heart_rate'][i])
+            start_time.append(str(time_array[i]))
+        # print('heart_rate')
+        # print(heart_rate)
+        # print('start_time')
+        # print(start_time)
+    # break
+    
+    heart_rate_data = {
+        'heart_rate': heart_rate,
+        'start_time': start_time
+    }
+    # print('heart_rate_data')
+    # print(heart_rate_data)
+     
+    # fileNameToSave = collection_id_var[0:21] + "_HeartRateData" +".txt"
+    fileNameToSave = str(nameIndex) + '_' + nameTimeStamp + "_HeartRateData" +".json"
+
+    with open(fileNameToSave, "w") as outfile: 
+        json.dump(heart_rate_data, outfile)
+    
+    # Graficando os dados da taxa de batimento cardiaco para cada coleta. (HR vs Time between samples)
+        
+    # Data for plotting
+    interval_time_series = []
+    # inicial_time = timeStartColection[j]
+    if (len(heart_rate_data['start_time']) != 0):
+        inicial_time = pd.Timestamp(heart_rate_data['start_time'][0])
+    # print('inicial_time')
+    # print(inicial_time)
+    
+    for k in range(len(heart_rate_data['start_time'])):
+        time_var = pd.Timestamp(heart_rate_data['start_time'][k]) - inicial_time
+        time_var_seconds = time_var.total_seconds()
+        interval_time_series.append(time_var_seconds)
+
+    ypoints = np.array(heart_rate_data['heart_rate'])
+    xpoints = np.array(interval_time_series)
+    
+    fig, ax = plt.subplots()
+    ax.plot(xpoints, ypoints)
+    
+    ax.set(xlabel='time (s)',
+        ylabel='Taxa de batimento cardiaco (bpm)',
+        title='Taxa de batimento cardiaco da coleta: ' + str(nameIndex) + '_' + nameTimeStamp)
+    ax.grid()
+    ax.set_ylim(40,190)
+    
+    figNameToSave = str(nameIndex) + '_' + nameTimeStamp + "_HeartRateData" +".png"
+    fig.savefig(figNameToSave)
+    

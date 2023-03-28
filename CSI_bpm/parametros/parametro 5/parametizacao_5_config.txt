@@ -1,0 +1,7 @@
+-------------Parametro 5 ------------
+
+Frequência Min/Max : 1/2.5
+
+Maiores Amplitudes : 5
+
+Janela Médias Móveis : 10
