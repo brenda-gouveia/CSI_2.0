@@ -9,6 +9,13 @@ from CSIKit.util import csitools
 import datetime
 import pandas as pd
 
+def process_time(dados_csi): # processa utilizando o tempo
+    segundos = (30,60) # adicionar o espaço
+
+    for seg in segundos:
+        print(seg)
+
+
 def tempo_segundos(pcap):
 
     time = csikit(pcap)
@@ -30,13 +37,9 @@ def csikit(pcap):
 
 def add_time(pcap, dados_csi):
     
-    dados_csi.insert(loc=0, column='tempo', value = tempo_segundos(pcap))
+    dados_csi.insert(loc=0, column='tempo', value = tempo_segundos(pcap)) # insere a coluna tempo
 
     return dados_csi
-
-
-
-
 
 
 def process_pcap_file(pcap_filename, caminho):
@@ -54,6 +57,8 @@ def process_pcap_file(pcap_filename, caminho):
     csi_data = samples.get_pd_csi()
 
     csi_data = add_time(pcap_filepath, csi_data)
+
+    csi_data = process_time(csi_data)
 
     return analyze(csi_data)
     
