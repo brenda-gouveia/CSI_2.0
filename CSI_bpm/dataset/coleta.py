@@ -9,11 +9,35 @@ from CSIKit.util import csitools
 import datetime
 import pandas as pd
 
+
+def tempo_total(seg, i, dados_csi):
+
+    dif = dados_csi["tempo"][i] - dados_csi["tempo"][0]
+
+    if dif == seg:
+        return True
+    else:
+        return False
+
 def process_time(dados_csi): # processa utilizando o tempo
-    segundos = (30,60) # adicionar o espaço
+    segundos = (30,60) # adicionar o espaço de tempo
+    i = 0 # ponteiro do tempo dos dados_csi
+    bpm = []
+
+    t = 0 # ponteiro inicial dos dados_csi
 
     for seg in segundos:
-        print(seg)
+        while i < 500:
+            if tempo_total(seg, i, dados_csi):
+                bpm.append(analyze(dados_csi[t:seg+1]))
+                t = seg
+                i+=1
+                break
+            else:
+                i+=1
+
+            
+    return tuple(bpm)
 
 
 def tempo_segundos(pcap):
@@ -60,7 +84,7 @@ def process_pcap_file(pcap_filename, caminho):
 
     csi_data = process_time(csi_data)
 
-    return analyze(csi_data)
+    return csi_data
     
     
 
