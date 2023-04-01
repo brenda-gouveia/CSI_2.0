@@ -2,6 +2,7 @@ import config
 from analysis.dataAnalysis import analyze
 import decoders.interleaved as decoder
 import os
+from os.path import dirname, join
 import dataset.coleta as dataset
 import pandas as pd
 import pickle
@@ -31,14 +32,19 @@ if __name__ == "__main__":
 
     print("########## CSI EXPLORER Begins ##########")
 
+
+
     path = "..\scans" # caminho dos scans
 
-    scans = os.listdir(path)
+    current_dir = path.dirname(__file__) # atual diretório
+    file_path = join(current_dir, path) # o diretório desejado
+
+    scans = os.listdir(file_path)
 
     quantidade = 0
 
     for filename in scans: 
-        caminho = os.path.join(path,filename)
+        caminho = os.path.join(file_path,filename)
         sequence = 1
         quantidade +=1
 
