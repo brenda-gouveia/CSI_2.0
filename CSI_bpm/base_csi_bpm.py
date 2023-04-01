@@ -1,7 +1,6 @@
 import config
 from analysis.dataAnalysis import analyze
 import decoders.interleaved as decoder
-from plotters.AmpPhaPlotter import Plotter
 import os
 import dataset.coleta as dataset
 import pandas as pd
@@ -24,10 +23,6 @@ def batimentos(scan, bpm):
     else:
         x = tabela.get(scan)
         tabela[scan] = pd.concat([x,bpm], ignore_index = True)
-
-
-
-
 
 
 if __name__ == "__main__":
@@ -63,11 +58,11 @@ if __name__ == "__main__":
     
     tab = pd.DataFrame(tabela)
     print(tab)
-    tab.to_csv("teste.csv")
-    tab.to_excel("path_to_file.xlsx")
+
+    tab.to_excel("tab.xlsx")
 
 
-    with open ("tabela_1_1config.pkl", mode ='wb') as f:
+    with open ("tabela_config.pkl", mode ='wb') as f:
         pickle.dump([tab], f)       
 
 
