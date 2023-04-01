@@ -1,7 +1,6 @@
 import config
 from analysis.dataAnalysis import analyze
 import decoders.interleaved as decoder
-from plotters.AmpPhaPlotter import Plotter
 import os
 import time
 from CSIKit.reader import get_reader
